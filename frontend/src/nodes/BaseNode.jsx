@@ -26,7 +26,7 @@
 // error / skipped — plus an output-preview footer after node_finished.
 // -----------------------------------------------------------------------------
 
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { Handle, Position, useUpdateNodeInternals } from 'reactflow';
 import { useStore } from '../store';
 
@@ -99,10 +99,10 @@ export const BaseNode = ({ id, data, selected, config }) => {
 
   // When handles are dynamic (e.g. Text node variables) ReactFlow must be told
   // to re-measure the node, otherwise new handles won't accept connections.
-  const handleSignature = useMemo(
-    () => `${inputs.map((h) => h.id).join(',')}|${outputs.map((h) => h.id).join(',')}|${width}`,
-    [inputs, outputs, width]
-  );
+  // A plain string key keeps the effect cheap: it re-runs only when the
+  // handle list or width actually changes.
+  const handleSignature =
+    `${inputs.map((h) => h.id).join(',')}|${outputs.map((h) => h.id).join(',')}|${width}`;
   useEffect(() => {
     updateNodeInternals(id);
   }, [id, handleSignature, updateNodeInternals]);
