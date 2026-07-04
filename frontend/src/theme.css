@@ -1,0 +1,572 @@
+/* ---------------------------------------------------------------------------
+   FlowForge — dark theme
+   Design tokens (pinned in CONTRACTS.md) first, then app shell, header,
+   palette, dialog, results panel, and ReactFlow chrome overrides.
+--------------------------------------------------------------------------- */
+
+:root {
+  --bg: #0d0f1a;
+  --surface: #161927;
+  --surface-2: #1d2133;
+  --border: #262b40;
+  --border-strong: #323852;
+  --text: #e8eaf6;
+  --muted: #8b91ad;
+  --faint: #5c6180;
+  --accent: #7c7ff2;
+  --accent-2: #9f6ef2;
+  --accent-soft: rgba(124, 127, 242, 0.14);
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --radius: 10px;
+  --radius-sm: 7px;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Inter, sans-serif;
+  /* local helpers, not pinned by contracts */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 5px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4), 0 2px 5px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0, 0, 0, 0.35);
+  --mono: ui-monospace, Menlo, Monaco, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: var(--mono);
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--faint);
+}
+
+/* --- App shell ------------------------------------------------------------ */
+
+.ff-app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.ff-main {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.ff-canvas {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg);
+}
+
+/* --- Header ----------------------------------------------------------------- */
+
+.ff-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.ff-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ff-header__logo {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  box-shadow: var(--shadow-sm);
+}
+
+.ff-header__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.ff-header__subtitle {
+  margin: 1px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.ff-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* --- Buttons ------------------------------------------------------------------ */
+
+.ff-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  font-family: var(--font);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s, box-shadow 0.15s,
+    filter 0.15s;
+}
+
+.ff-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+.ff-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.ff-btn svg {
+  color: var(--accent);
+}
+
+.ff-btn--primary {
+  padding: 8px 18px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  border-color: transparent;
+  box-shadow: var(--shadow-sm);
+}
+
+.ff-btn--primary svg {
+  color: #fff;
+}
+
+.ff-btn--primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  border-color: transparent;
+  filter: brightness(1.08);
+  box-shadow: var(--shadow-md);
+}
+
+/* --- Validate result pill ------------------------------------------------------ */
+
+.ff-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid;
+  border-radius: 999px;
+  animation: ff-fade-in 0.2s ease;
+}
+
+.ff-pill--ok {
+  color: var(--success);
+  border-color: rgba(52, 211, 153, 0.35);
+  background: rgba(52, 211, 153, 0.1);
+}
+
+.ff-pill--bad {
+  color: var(--danger);
+  border-color: rgba(248, 113, 113, 0.35);
+  background: rgba(248, 113, 113, 0.1);
+}
+
+/* --- Palette (left sidebar) ------------------------------------------------------ */
+
+.ff-palette {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 220px;
+  flex-shrink: 0;
+  padding: 16px 14px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+
+.ff-palette__category {
+  margin-bottom: 7px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+}
+
+.ff-palette__items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ff-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 11px;
+  font-size: 12.5px;
+  font-weight: 550;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: grab;
+  user-select: none;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+
+.ff-chip:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.ff-chip__icon {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.ff-palette__hint {
+  margin-top: auto;
+  padding-top: 12px;
+  font-size: 11px;
+  text-align: center;
+  color: var(--faint);
+}
+
+/* --- Run dialog ---------------------------------------------------------------- */
+
+.ff-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: rgba(7, 8, 15, 0.6);
+  backdrop-filter: blur(3px);
+  animation: ff-fade-in 0.15s ease;
+}
+
+.ff-dialog {
+  width: 380px;
+  max-width: calc(100vw - 40px);
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  box-shadow: var(--shadow-lg);
+  animation: ff-rise-in 0.2s cubic-bezier(0.21, 1.02, 0.73, 1);
+}
+
+.ff-dialog__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.ff-dialog__subtitle {
+  margin: 4px 0 16px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.ff-dialog__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.ff-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+/* --- Form fields (dialog) ---------------------------------------------------------
+   Scoped under .ff-dialog: nodes.css owns the bare .ff-field classes used on
+   canvas nodes; the dialog wants slightly roomier fields, and scoping (higher
+   specificity) makes that explicit instead of relying on import order. */
+
+.ff-dialog .ff-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ff-dialog .ff-field__label {
+  font-size: 10.5px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.ff-dialog .ff-field__control {
+  width: 100%;
+  padding: 8px 10px;
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.ff-dialog .ff-field__control:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.ff-dialog .ff-field__control::placeholder {
+  color: var(--faint);
+}
+
+/* --- Results panel ---------------------------------------------------------------- */
+
+.ff-results {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 60;
+  width: 320px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  box-shadow: var(--shadow-lg);
+  animation: ff-rise-in 0.25s cubic-bezier(0.21, 1.02, 0.73, 1);
+}
+
+.ff-results__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  color: var(--faint);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.ff-results__close:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+.ff-results__status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding-right: 20px; /* keep clear of the close button */
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.ff-results__status--running {
+  color: var(--accent);
+}
+
+.ff-results__status--done {
+  color: var(--success);
+}
+
+.ff-results__status--error {
+  color: var(--danger);
+}
+
+.ff-results__error {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--danger);
+  word-break: break-word;
+}
+
+.ff-results__outputs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.ff-results__row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 9px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.ff-results__key {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.ff-results__value {
+  font-size: 12px;
+  line-height: 1.45;
+  font-family: var(--mono);
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* --- Animations ----------------------------------------------------------------- */
+
+@keyframes ff-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ff-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ff-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ff-spin {
+  animation: ff-spin 0.9s linear infinite;
+}
+
+/* --- ReactFlow chrome (dark) -------------------------------------------------------- */
+
+.react-flow__edge-path {
+  stroke: var(--accent);
+  stroke-width: 1.8;
+}
+
+.react-flow__edge.animated .react-flow__edge-path {
+  stroke-dasharray: 6;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: var(--accent-2);
+}
+
+.react-flow__connection-path {
+  stroke: var(--accent-2);
+  stroke-width: 1.8;
+}
+
+.react-flow__controls {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.react-flow__controls-button {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.react-flow__controls-button svg {
+  fill: var(--text);
+}
+
+.react-flow__controls-button:hover {
+  background: var(--surface-2);
+}
+
+.react-flow__minimap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.react-flow__minimap-mask {
+  fill: rgba(13, 15, 26, 0.65);
+}
+
+.react-flow__minimap-node {
+  fill: var(--surface-2);
+  stroke: var(--border-strong);
+}
+
+.react-flow__selection {
+  background: var(--accent-soft);
+  border: 1px dashed var(--accent);
+}
+
+.react-flow__attribution {
+  background: transparent;
+}
+
+.react-flow__attribution a {
+  color: var(--faint);
+}
