@@ -1,0 +1,243 @@
+/* ---------------------------------------------------------------------------
+   FlowForge — node styles (owned by the nodes module).
+   Uses only the design tokens declared in theme.css :root (dark theme).
+   rgba() literals below are translucent variants of those token colors:
+   accent #7c7ff2, success #34d399, danger #f87171.
+--------------------------------------------------------------------------- */
+
+/* --- Node card ------------------------------------------------------------ */
+
+.ff-node {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25);
+  font-family: var(--font);
+  color: var(--text);
+  transition: box-shadow 0.15s, border-color 0.15s, opacity 0.15s;
+}
+
+.ff-node:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.ff-node--selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2.5px rgba(124, 127, 242, 0.3), 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Header ----------------------------------------------------------------- */
+
+.ff-node__header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 12px 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.ff-node__icon {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.ff-node__title {
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+/* Duration badge shown in the header once the node finishes. */
+.ff-node__ms {
+  margin-left: auto;
+  padding: 1px 7px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--success);
+  background: rgba(52, 211, 153, 0.14);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  border-radius: 999px;
+}
+
+.ff-node__description {
+  padding: 7px 12px 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.ff-node__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px 12px;
+}
+
+/* --- Execution status footer (output preview / error message) --------------- */
+
+.ff-node__footer {
+  padding: 7px 12px 8px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--muted);
+  background: var(--surface-2);
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 var(--radius) var(--radius);
+  word-break: break-word;
+}
+
+.ff-node__footer--error {
+  color: var(--danger);
+  background: rgba(248, 113, 113, 0.08);
+  border-top-color: rgba(248, 113, 113, 0.3);
+}
+
+/* --- Execution status rings --------------------------------------------------- */
+
+.ff-node--running {
+  border-color: var(--accent);
+  animation: ff-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes ff-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(124, 127, 242, 0.5); }
+  50%      { box-shadow: 0 0 0 8px rgba(124, 127, 242, 0); }
+}
+
+.ff-node--done {
+  border-color: var(--success);
+  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.22);
+}
+
+.ff-node--error {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.22);
+}
+
+.ff-node--skipped {
+  opacity: 0.45;
+}
+
+/* --- Fields --------------------------------------------------------------------- */
+
+.ff-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ff-field__label {
+  font-size: 10px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--faint);
+}
+
+.ff-field__control {
+  width: 100%;
+  padding: 6px 8px;
+  font-family: var(--font);
+  font-size: 12.5px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.ff-field__control::placeholder {
+  color: var(--faint);
+}
+
+.ff-field__control:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2.5px var(--accent-soft);
+}
+
+/* Native select popups render with the control's colors on most platforms. */
+select.ff-field__control option {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.ff-field__control--autosize {
+  resize: none;
+  overflow: hidden;
+  line-height: 1.45;
+  min-height: 30px;
+}
+
+textarea.ff-field__control {
+  resize: vertical;
+}
+
+/* --- Handles ---------------------------------------------------------------------- */
+
+.ff-handle.react-flow__handle {
+  width: 11px;
+  height: 11px;
+  background: var(--surface);
+  border: 2.5px solid var(--accent);
+  transition: transform 0.12s, background 0.12s;
+}
+
+.ff-handle.react-flow__handle:hover {
+  background: var(--accent);
+  transform: scale(1.25);
+}
+
+.ff-handle.react-flow__handle-left {
+  left: -6px;
+}
+
+.ff-handle.react-flow__handle-right {
+  right: -6px;
+}
+
+/* Pill labels float just outside the node, level with their handle. */
+.ff-handle__label {
+  position: absolute;
+  transform: translateY(-50%);
+  font-size: 9.5px;
+  font-weight: 650;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 1px 7px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.ff-handle__label--left {
+  right: 100%;
+  margin-right: 10px;
+}
+
+.ff-handle__label--right {
+  left: 100%;
+  margin-left: 10px;
+}
+
+/* Our node types "input" and "output" collide with ReactFlow's built-in
+   node type class names (.react-flow__node-input / -output), which carry
+   default white-box styling. Neutralize it — our card styles its own box. */
+.react-flow__node-input,
+.react-flow__node-output {
+  background: none;
+  border: none;
+  padding: 0;
+  width: auto;
+  border-radius: 0;
+  box-shadow: none;
+  text-align: left;
+}
