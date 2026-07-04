@@ -44,7 +44,7 @@ const LlmNode = createNode({
       key: 'model',
       label: 'Model',
       type: 'select',
-      options: ['mock', 'claude-haiku-4-5', 'claude-sonnet-4-6'],
+      options: ['mock', 'gemini-flash', 'claude-haiku-4-5', 'claude-sonnet-4-6'],
       default: 'mock',
     },
   ],

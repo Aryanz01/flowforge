@@ -9,10 +9,11 @@ import httpx
 # Matches {{ name }} where name is a valid JS identifier (same regex as the frontend).
 VAR_RE = re.compile(r"\{\{\s*([A-Za-z_$][A-Za-z0-9_$]*)\s*\}\}")
 
-# UI model choice -> Anthropic API model id.
+# UI model choice -> provider API model id.
 MODEL_IDS = {
     "claude-haiku-4-5": "claude-haiku-4-5-20251001",
     "claude-sonnet-4-6": "claude-sonnet-4-6",
+    "gemini-flash": "gemini-2.5-flash",
 }
 
 
@@ -37,15 +38,26 @@ async def run_text(data, inputs, ctx):
 
 
 async def run_llm(data, inputs, ctx):
+    """Provider-agnostic LLM step: mock by default, Anthropic or Gemini with a key.
+
+    The provider is chosen by the model name; each provider needs only its own
+    env key. Missing key (or model 'mock') falls back to the keyless mock so
+    the demo always runs.
+    """
     model = data.get("model") or "mock"
     prompt = str(inputs.get("prompt", ""))
     system = str(inputs.get("system", ""))
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
 
-    if not api_key or model == "mock":
-        await asyncio.sleep(0.4)  # simulate latency so the demo shows realistic timing
-        return {"response": f"[mock:{model}] {prompt[:300]}"}
+    if model.startswith("gemini") and os.environ.get("GEMINI_API_KEY"):
+        return {"response": await _call_gemini(model, system, prompt)}
+    if model.startswith("claude") and os.environ.get("ANTHROPIC_API_KEY"):
+        return {"response": await _call_anthropic(model, system, prompt)}
 
+    await asyncio.sleep(0.4)  # simulate latency so the demo shows realistic timing
+    return {"response": f"[mock:{model}] {prompt[:300]}"}
+
+
+async def _call_anthropic(model, system, prompt):
     body = {
         "model": MODEL_IDS.get(model, model),
         "max_tokens": 512,
@@ -57,7 +69,7 @@ async def run_llm(data, inputs, ctx):
         res = await client.post(
             "https://api.anthropic.com/v1/messages",
             headers={
-                "x-api-key": api_key,
+                "x-api-key": os.environ["ANTHROPIC_API_KEY"],
                 "anthropic-version": "2023-06-01",
                 "content-type": "application/json",
             },
@@ -65,8 +77,24 @@ async def run_llm(data, inputs, ctx):
         )
         res.raise_for_status()
         blocks = res.json().get("content", [])
-        text = "".join(b.get("text", "") for b in blocks if b.get("type") == "text")
-        return {"response": text}
+        return "".join(b.get("text", "") for b in blocks if b.get("type") == "text")
+
+
+async def _call_gemini(model, system, prompt):
+    model_id = MODEL_IDS.get(model, model)
+    body = {"contents": [{"parts": [{"text": prompt}]}]}
+    if system:
+        body["systemInstruction"] = {"parts": [{"text": system}]}
+    async with httpx.AsyncClient(timeout=30) as client:
+        res = await client.post(
+            f"https://generativelanguage.googleapis.com/v1beta/models/{model_id}:generateContent",
+            headers={"x-goog-api-key": os.environ["GEMINI_API_KEY"]},
+            json=body,
+        )
+        res.raise_for_status()
+        candidates = res.json().get("candidates", [])
+        parts = candidates[0]["content"]["parts"] if candidates else []
+        return "".join(p.get("text", "") for p in parts)
 
 
 async def run_api_request(data, inputs, ctx):
